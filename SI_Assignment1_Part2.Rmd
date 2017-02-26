@@ -1,0 +1,20 @@
+---
+title: "Statistical Inference - Project - Basic Inferential Data Analysis"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Author: Wilson Mok  
+
+### Overview
+
+### Loading data and basic analyses
+
+### Summary of data
+
+### Confidence Intervals and/or hypothesis tests to compare tooth growth by supp and dose
+
+### Conclusions
