@@ -10,11 +10,105 @@ knitr::opts_chunk$set(echo = TRUE)
 Author: Wilson Mok  
 
 ### Overview
+In this assignment, we are going to analyze the ToothGrowth data in R datasets package.  We will be performing:  
+1. Load the ToothGrowth data and perform some basic exploratory data analyses.  
+2. Provide a basic summary of the data.  
+3. Use confidence intervals and/or hypothesis tests to compare tooth growth by supp and dose. (Only use the techniques from class, even if there's other approaches worth considering)  
+4. State your conclusions and the assumptions needed for your conclusions.
+
+### Libraries
+```{r libraries, message=FALSE, warning=FALSE}
+library(data.table)
+library(dplyr)
+library(ggplot2)
+```
 
 ### Loading data and basic analyses
+```{r}
+library(data.table)
+library(dplyr)
+library(ggplot2)
+
+data("ToothGrowth")
+str(ToothGrowth)
+
+levels(ToothGrowth$supp)
+unique(ToothGrowth$dose)
+
+sum(is.na(ToothGrowth$len))
+sum(is.na(ToothGrowth$supp))
+sum(is.na(ToothGrowth$dose))
+```
+
+We have 2 variables which impact tooth growth: suppliments and dosage.  
+
+```{r}
+tg <- ToothGrowth
+tg$dose <- factor(tg$dose)
+ggplot(data = tg, aes(x=dose, y=len)) + 
+    geom_boxplot(aes(fill = dose)) + 
+    facet_wrap(~ supp) + 
+    labs(title="Tooth Growth for each suppliment by Dosage", 
+         x="Dosage", y="Tooth length")
+```
+Interestingly, the mean of tooth growth is similar when the dosage is 2.0 mg/day for both suppliments.  Orange Juice appears to be more beneficial toward tooth growth for dosage level of 0.5 mg/day and 1.0 mg/day.
 
 ### Summary of data
+```{r}
+dim(ToothGrowth)
+summary(ToothGrowth)
+
+sum(ToothGrowth$supp=="OJ")
+sum(ToothGrowth$supp=="VC")
+
+sum(ToothGrowth$dose==0.5)
+sum(ToothGrowth$dose==1)
+sum(ToothGrowth$dose==2)
+```
 
 ### Confidence Intervals and/or hypothesis tests to compare tooth growth by supp and dose
+We will be running the following t.test to examine the impact to tooth growth:  
+1. Suppliment
+2. Dosage
+
+Before we can begin the testing, we have to define the Null and alternative hypothesis:
+
+* H0 - There is no impact between the test variables and tooth growth.
+* H1 - There is impact between the test variables and tooth growth.
+
+Alpha level = 0.05 is used to reject the null hypothesis.
+
+#### Suppliment
+```{r}
+t.test(tg$len[tg$supp=="OJ"], tg$len[tg$supp=="VC"])
+```
+The p-value is 0.061. We cannot exclude the Null hypotheis because it is above the alpha level.
+
+#### Dosage
+Since we have 3 dosages (0.5, 1, and 2), we have to break up the analysis into 3 tests.  
+
+##### Dosage - 0.5 and 1
+```{r}
+t.test(tg$len[tg$dose==0.5], tg$len[tg$dose==1])
+```
+The p-value is 1.268e-07 and is significantly less than the defined alpha level.
+
+##### Dosage - 0.5 and 2
+```{r}
+t.test(tg$len[tg$dose==0.5], tg$len[tg$dose==2])
+```
+Similarly to the test above, the p-value (4.398e-14) is significantly less than the pre-defined alpha level.
+
+##### Dosage - 1 and 2
+```{r}
+t.test(tg$len[tg$dose==1], tg$len[tg$dose==2])
+```
+The p-value is 1.906e-05.  This value is significantly less than the pre-defined alpha level as well.
+
+In the dosage tests, we found all the p-values to be below the alpha level.  
 
 ### Conclusions
+Based on the analysis, we can conclude the following:  
+1. It is unclear which suppliment is better for tooth growth.  
+2. All amount of dosages do impact to the tooth growth.  This is align with the finding during the basic analysis phase.  
+3. From our initial finding, on average both suppliments provide the same tooth growth benefit.  
