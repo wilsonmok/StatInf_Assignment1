@@ -1,6 +1,8 @@
 ---
 title: "Statistical Inference - Project - Simulation Exercise"
-output: html_document
+output:
+  pdf_document: default
+  html_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -63,4 +65,26 @@ simVar
 
 Conclusion: The simulated variance is very similar to the theoetical variance.
 
-### Distribution
+### Show simulated data is approximately normal
+In order investage if the simulated data is approximately normal, we have to generate sample normal data with the same mean and standard distribution as the simulated exponential data.  We can do this by using r function dnorm.  
+```{r}
+theoSd <- 1/lambda/sqrt(n)
+theoSd
+
+normPoints <- seq(min(mns), max(mns), length=numOfSim)
+normData <- dnorm(normPoints, mean=theoMean, sd=theoSd)
+
+hist(mns, prob=T, 
+     main="Comparing Sample Exponential Distribution\n with Theoretical Normal Distribution",
+     xlab="Sample Means of each Simulation",
+     ylab="Density")
+abline(v=simMean, col='blue', lwd=1)
+abline(v=theoMean, col='red', lwd=1)
+
+lines(density(mns), col="blue", lwd=1)
+lines(normPoints, normData, pch=22, col="red", lwd=1)
+legend('topright', c("Simulation", "Theoretical"), col=c("blue","red"),
+       lty=c(1,1))
+```
+
+Conclusion: The simulated curve is very similar to the theoretical standard normal curve.  Given this information, I believe the simulated data is approximately normal.
